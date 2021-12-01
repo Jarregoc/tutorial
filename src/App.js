@@ -91,7 +91,7 @@ function ConeGrunt(props) {
 }
 
 function CreatePlane(props) {
-  var plane = new Plane()
+  var plane = new Plane(0, 0, 0, 10, 10, "black")
   CreateBoard()
   return plane.mesh
 }
@@ -99,32 +99,55 @@ function CreatePlane(props) {
 function CreateBoard(props) {
   //1.create array of plane objects
   var rectangles = []
-  var x = -50
-  var y = 0
-  var z = 0
-  var color = "red";
-  for(let i = 0; i < 100; i++) {
-    if(i % 2 == 0) {
-      color = "white"
+  let x = -50, y = 0, z = 100
+  let color = "black"
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      if(i % 2 == j % 2) {
+        color = "white"
+      }
+      else {
+        color = "black"
+      }
+      rectangles.push(new Plane(x, y, z, 10, 10, color))
+      console.log("coordinates for " + i + "" + j + "th Plane are: (" + x + ", " + z + ") and the color is: " + color + "\n")
+      if(z > 10) {
+        z -= 10
+      }
+      else {
+        z = 100
+      }
+    }
+    if(x < 40) {
+    x+=10
     }
     else {
-      color = "black"
-    }
-    rectangles.push(new Plane(x, y ,z, 10, 10, color)) //adds new Plane to board
-    console.log("coordinates for " + i + "th Plane are: (" + x + ", " + z + ") and the color is: " + color + "\n")
-    if(x <= 40) {
-      x+=10
-    }
-    else {
-      x = -50
-    }
-    if(z <= 90) {
-      z+=10
-    }
-    else {
-      z = 0
+    x = -50
     }
   }
+  
+  // for(let i = 0; i < 100; i++) {
+  //   if(i % 2 == 0) {
+  //     color = "white"
+  //   }
+  //   else {
+  //     color = "black"
+  //   }
+  //   rectangles.push(new Plane(x, y ,z, 10, 10, color)) //adds new Plane to board
+  //   console.log("coordinates for " + i + "th Plane are: (" + x + ", " + z + ") and the color is: " + color + "\n")
+  //   if(x <= 40) {
+  //     x+=10
+  //   }
+  //   else {
+  //     x = -50
+  //   }
+  //   if(z <= 90) {
+  //     z+=10
+  //   }
+  //   else {
+  //     z = 0
+  //   }
+  // }
   //2.Map the array of plane objects to a mesh jsx component for react to use
   return (
     <group>
@@ -155,7 +178,7 @@ function App() {
         <Enemy/>
         <Player/>
         <CreatePlane/>
-        <Plane2/>
+        {/* <Plane2/> */}
         <ConeGrunt/>
         <CreateBoard/>
       </Physics>
