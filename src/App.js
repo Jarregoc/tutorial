@@ -1,10 +1,11 @@
 import './App.css';
-import React, {useRef} from "react";
+import React, { useRef} from "react";
 import {Canvas, useFrame} from "react-three-fiber";
-import { OrbitControls, Stars, Cone } from "drei";
+import { OrbitControls, Stars } from "drei";
 import { Physics, useBox, usePlane} from "use-cannon";
 import { ConeBufferGeometry, PlaneBufferGeometry } from 'three';
 import Grunt from "./Grunt.js"
+import Plane from "./Plane.js"
 
 function Enemy(props) {
   const [ref, api] = useBox(() => ({
@@ -45,7 +46,7 @@ function Plane1(props) {
     rotation: [-Math.PI / 2, 0, 0]
   }))
   return(
-    <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+    <mesh position={[25, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
       <planeBufferGeometry attach="geometry" args={[50, 50]}/>
       <meshLambertMaterial attach="material" color="seafoamgreen"/>
     </mesh>
@@ -57,7 +58,7 @@ function Plane2(props) {
     rotation: [-Math.PI / 2, 0, 0]
   }))
   return(
-    <mesh position={[-50, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+    <mesh position={[-25, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
       <planeBufferGeometry attach="geometry" args={[50, 50]}/>
       <meshLambertMaterial attach="material" color="black"/>
     </mesh>
@@ -89,6 +90,63 @@ function ConeGrunt(props) {
   return grunt.mesh
 }
 
+function CreatePlane(props) {
+  var plane = new Plane()
+  CreateBoard()
+  return plane.mesh
+}
+
+function CreateBoard(props) {
+  //1.create array of plane objects
+  var rectangles = []
+  var x = -50
+  var y = 0
+  var z = 0
+  var color = "red";
+  for(let i = 0; i < 100; i++) {
+    if(i % 2 == 0) {
+      color = "white"
+    }
+    else {
+      color = "black"
+    }
+    rectangles.push(new Plane(x, y ,z, 10, 10, color)) //adds new Plane to board
+    console.log("coordinates for " + i + "th Plane are: (" + x + ", " + z + ") and the color is: " + color + "\n")
+    if(x <= 40) {
+      x+=10
+    }
+    else {
+      x = -50
+    }
+    if(z <= 90) {
+      z+=10
+    }
+    else {
+      z = 0
+    }
+  }
+  //2.Map the array of plane objects to a mesh jsx component for react to use
+  return (
+    <group>
+      {rectangles.map((plane) => (
+        <mesh position={[plane.x, plane.y, plane.z]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeBufferGeometry attach="geometry" args={[plane.width, plane.height]}/>
+          <meshLambertMaterial attach="material" color={plane.recColor}/>
+        </mesh>
+      ))}
+    </group>
+
+  )
+  // return (
+  //   <board>
+  //     <planeBufferGeometry attach="geometry"/>
+  //     <meshLambertMaterial attach="material" color="seafoamgreen"/>
+  //   </board>
+
+  // )
+}
+
+
 function App() {
   return (
     <Canvas>
@@ -96,9 +154,10 @@ function App() {
       <Physics>
         <Enemy/>
         <Player/>
-        <Plane1/>
+        <CreatePlane/>
         <Plane2/>
         <ConeGrunt/>
+        <CreateBoard/>
       </Physics>
       <OrbitControls/>
       <ambientLight/>
