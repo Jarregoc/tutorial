@@ -9,7 +9,7 @@ class Grunt {
                 <meshLambertMaterial attach="material" color="yellow"/>
             </mesh>
         )
-        return this.mesh
+        // return this.mesh
     }
 
     createGrunt(x, z) {
